@@ -312,6 +312,7 @@
   }
 
   async function enviar() {
+    // 1. Verificar cupos reales antes de procesar
     if (cuposDisponiblesGlobal <= 0) {
       alert("Lo sentimos, ya no quedan cupos disponibles.");
       actualizarCupos();
@@ -326,6 +327,7 @@
     const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
     let comunidad = comunidadSel === 'otro' ? comunidadOtro : comunidadSel;
 
+    // 2. Validaciones
     let valid = true;
     showErr('nombre',    !nombre);             if (!nombre) valid = false;
     showErr('cedula',    cedula.length < 6);   if (cedula.length < 6) valid = false;
@@ -356,6 +358,7 @@
     };
 
     try {
+      // 3. ENVÍO REAL A GOOGLE SHEETS
       await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -363,6 +366,7 @@
         body: JSON.stringify(data)
       });
 
+      // 4. VALIDACIÓN DE ÉXITO
       setTimeout(async () => {
         try {
           const resCheck = await fetch(APPS_SCRIPT_URL);
@@ -381,10 +385,28 @@
               '<strong>Refrigerio:</strong> Sí ✅<br>' +
               '<strong>Registrado:</strong> ' + data.hora_inscripcion;
           } else {
-            alert("❌ Esta cédula ya se encuentra registrada para este taller.");
+            alert("❌ Error: Esta cédula ya se encuentra registrada para este taller.");
             btn.disabled = false;
             btn.textContent = '🌱 Confirmar mi inscripción';
             actualizarCupos();
+          }
+        } catch (e) {
+          // Si el check falla por red pero se envió, mostramos éxito
+          actualizarCupos();
+          document.getElementById('form-section').style.display = 'none';
+          document.getElementById('success-section').classList.add('show');
+          document.getElementById('success-detail').innerHTML =
+            '<strong>Nombre:</strong> '     + escHtml(data.nombre)    + '<br>' +
+            '<strong>Registrado:</strong> ' + data.hora_inscripcion;
+        }
+      }, 2500);
+
+    } catch (error) {
+      alert("Hubo un error de conexión. Intenta de nuevo.");
+      btn.disabled = false;
+      btn.textContent = '🌱 Confirmar mi inscripción';
+    }
+  }
           }
         } catch (e) {
           actualizarCupos();
