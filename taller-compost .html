@@ -266,8 +266,7 @@
 
 async function enviar() {
     const btn = document.getElementById('btn-enviar');
-    
-    // Captura de datos
+
     const nombre = document.getElementById('nombre').value.trim();
     const cedula = document.getElementById('cedula').value.trim();
     const telefono = document.getElementById('telefono').value.trim();
@@ -276,58 +275,82 @@ async function enviar() {
     const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
     const como = document.getElementById('como').value;
 
-    // Validación simple
-    if(!nombre || !cedula || !telefono || !barrio || !comunidadSel) {
+    if (!nombre || !cedula || !telefono || !barrio || !comunidadSel) {
         alert("Por favor completa los campos obligatorios (*)");
         return;
     }
 
-    // Estado de carga
     btn.disabled = true;
-    btn.textContent = '⏳ PROCESANDO...';
+    btn.innerHTML = '⏳ Enviando...';
 
-    // Preparar lo que se envía a Google
+    const horaInscripcion = new Date().toLocaleString();
+
     const payload = {
-        nombre: nombre,
-        cedula: cedula,
-        telefono: telefono,
+        nombre, cedula, telefono,
         email: document.getElementById('email').value.trim() || 'N/A',
-        barrio: barrio,
+        barrio,
         comunidad: comunidadSel === 'otro' ? comunidadOtro : comunidadSel,
         como_entero: como,
         refrigerio: 'Sí',
-        hora_inscripcion: new Date().toLocaleString()
+        hora_inscripcion: horaInscripcion
     };
 
     try {
-        const response = await fetch(APPS_SCRIPT_URL, {
+        // Paso 1: verificar duplicado y cupos ANTES con GET
+        const antesRes = await fetch(APPS_SCRIPT_URL + '?cedula=' + encodeURIComponent(cedula));
+        const antes = await antesRes.json();
+
+        if (antes.duplicado) {
+            alert('Esta cédula ya está inscrita 🌱');
+            btn.disabled = false;
+            btn.innerHTML = '🌱 Confirmar mi inscripción';
+            return;
+        }
+        if (antes.libres <= 0) {
+            document.getElementById('form-section').style.display = 'none';
+            document.getElementById('lleno-section').classList.add('show');
+            return;
+        }
+
+        const cuposAntes = antes.libres;
+
+        // Paso 2: POST con no-cors (los datos llegan aunque no podamos leer la respuesta)
+        btn.innerHTML = '⏳ Guardando...';
+        await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            mode: 'cors', // Cambiado a cors para recibir respuesta
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        
-        const res = await response.json();
 
-        if (res.ok) {
+        // Paso 3: esperar 2s y verificar con GET si el cupo bajó
+        btn.innerHTML = '⏳ Verificando...';
+        await new Promise(r => setTimeout(r, 2000));
+
+        const despuesRes = await fetch(APPS_SCRIPT_URL);
+        const despues = await despuesRes.json();
+
+        if (despues.libres < cuposAntes) {
             document.getElementById('form-section').style.display = 'none';
             document.getElementById('success-section').classList.add('show');
-            document.getElementById('success-detail').innerHTML = `
-                <strong>¡Bienvenido/a!</strong><br>
-                ${nombre}<br>
-                Cédula: ${cedula}<br>
-                Fecha: ${payload.hora_inscripcion}
-            `;
+            document.getElementById('success-detail').innerHTML =
+                '<strong>¡Bienvenido/a!</strong><br>' +
+                nombre + '<br>' +
+                'Cédula: ' + cedula + '<br>' +
+                'Fecha: ' + horaInscripcion;
+            cuposGlobal = despues.libres;
             actualizarCupos();
         } else {
-            alert(res.razon === 'duplicado' ? 'Esta cédula ya está inscrita 🌱' : 'Error: ' + res.razon);
+            alert('Hubo un problema al guardar tu inscripción. Intenta de nuevo.');
             btn.disabled = false;
-            btn.textContent = '🌱 Confirmar mi inscripción';
+            btn.innerHTML = '🌱 Confirmar mi inscripción';
         }
+
     } catch (e) {
         console.error(e);
-        alert('Error de conexión. Verifica que el Script de Google esté publicado correctamente.');
+        alert('Error de conexión. Verifica tu internet e intenta de nuevo.');
         btn.disabled = false;
-        btn.textContent = '🌱 Confirmar mi inscripción';
+        btn.innerHTML = '🌱 Confirmar mi inscripción';
     }
 }
   actualizarCupos();
