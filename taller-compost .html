@@ -366,25 +366,28 @@
     return Math.max(0, TOTAL_CUPOS - getCuposUsados());
   }
 
-  /* ── Actualizar UI de cupos ── */
-  function actualizarCupos(){
-    const libres = getCuposLibres();
-    const usados = getCuposUsados();
-    const pct    = (usados / TOTAL_CUPOS) * 100;
+ async function actualizarCupos(){
+    try {
+      // Pedimos al script que nos diga cuántos cupos quedan realmente
+      const res = await fetch(APPS_SCRIPT_URL);
+      const data = await res.json();
+      const libres = data.libres;
+      const usados = 10 - libres;
+      const pct = (usados / 10) * 100;
 
-    // Hero bar
-    document.getElementById('hero-bar').style.width = pct + '%';
-    document.getElementById('hero-cupos-num').textContent = libres;
+      document.getElementById('hero-bar').style.width = pct + '%';
+      document.getElementById('hero-cupos-num').textContent = libres;
 
-    // Form mini
-    const miniEl = document.getElementById('form-cupos-num');
-    miniEl.textContent = libres + ' / ' + TOTAL_CUPOS;
-    miniEl.classList.toggle('urgente', libres <= 3);
+      const miniEl = document.getElementById('form-cupos-num');
+      miniEl.textContent = libres + ' / 10';
+      miniEl.classList.toggle('urgente', libres <= 3);
 
-    // Si no hay cupos → mostrar pantalla lleno
-    if(libres === 0){
-      document.getElementById('form-section').style.display = 'none';
-      document.getElementById('lleno-section').classList.add('show');
+      if(libres <= 0){
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('lleno-section').classList.add('show');
+      }
+    } catch(e) {
+      console.error("Error obteniendo cupos", e);
     }
   }
 
