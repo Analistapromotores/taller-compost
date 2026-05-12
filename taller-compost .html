@@ -413,52 +413,74 @@
     });
   }
 
-  /* ── Enviar ── */
-  async function enviar(){
-    // Verificar cupos antes de enviar
-    if(getCuposLibres() === 0){
-      actualizarCupos(); return;
+  async function enviar() {
+    if (cuposGlobal <= 0) {
+        alert('Lo sentimos, ya no hay cupos.');
+        return;
     }
 
-    const nombre   = document.getElementById('nombre').value.trim();
-    const cedula   = document.getElementById('cedula').value.trim().replace(/\D/g,'');
+    const btn = document.getElementById('btn-enviar');
+
+    // Validación de campos obligatorios
+    const nombre = document.getElementById('nombre').value.trim();
+    const cedula = document.getElementById('cedula').value.trim().replace(/\D/g, '');
     const telefono = document.getElementById('telefono').value.trim();
-    const barrio   = document.getElementById('barrio').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const barrio = document.getElementById('barrio').value.trim();
     const comunidadSel = document.getElementById('comunidad').value;
     const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
 
-    let comunidad = comunidadSel;
-    if(comunidadSel === 'otro') comunidad = comunidadOtro;
-
-    let valid = true;
-    showErr('nombre',    !nombre);    if(!nombre) valid=false;
-    showErr('cedula',    cedula.length < 6); if(cedula.length < 6) valid=false;
-    showErr('telefono',  telefono.length < 7); if(telefono.length < 7) valid=false;
-    showErr('barrio',    !barrio);    if(!barrio) valid=false;
-    showErr('comunidad', !comunidadSel); if(!comunidadSel) valid=false;
-    if(comunidadSel === 'otro'){
-      showErr('otro', !comunidadOtro);
-      if(!comunidadOtro) valid=false;
+    if (!nombre || cedula.length < 6 || !telefono || !barrio || !comunidadSel) {
+        alert("Por favor completa todos los campos obligatorios.");
+        return;
     }
-    if(!valid) return;
 
-    const btn = document.getElementById('btn-enviar');
     btn.disabled = true;
-    btn.textContent = '⏳ Enviando…';
+    btn.textContent = '⏳ PROCESANDO...';
 
-    const data = {
-      nombre,
-      cedula,
-      telefono,
-      email:       document.getElementById('email').value.trim() || 'No indicado',
-      barrio,
-      comunidad,
-      como_entero: document.getElementById('como').value || 'No indicado',
-      refrigerio:  'Sí — incluido',
-      hora_inscripcion: getNow(),
-      timestamp:   Date.now()
+    const payload = {
+        nombre: nombre,
+        cedula: cedula,
+        telefono: telefono,
+        email: email,
+        barrio: barrio,
+        comunidad: comunidadSel === 'otro' ? comunidadOtro : comunidadSel,
+        como_entero: document.getElementById('como').value,
+        refrigerio: 'Sí',
+        hora_inscripcion: new Date().toLocaleString(),
+        timestamp: Date.now()
     };
 
+    try {
+        // Usamos mode: 'no-cors' y text/plain para saltar las restricciones de CORS de Google
+        await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        // Con no-cors no podemos leer resultado.json(), 
+        // así que asumimos éxito si no cae en el catch
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('success-section').classList.add('show');
+        document.getElementById('success-detail').innerHTML = `
+            <strong>Registrado a nombre de:</strong><br>${nombre}<br><br>
+            <strong>Documento:</strong><br>${cedula}<br><br>
+            <strong>Fecha:</strong><br>${payload.hora_inscripcion}
+        `;
+
+        actualizarCupos();
+
+    } catch (error) {
+        console.error(error);
+        alert('Error de conexión. Verifica que el script esté publicado para "Cualquier persona".');
+        btn.disabled = false;
+        btn.textContent = '🌱 CONFIRMAR INSCRIPCIÓN';
+    }
+}
     console.log('INSCRIPCION COMPOST:', JSON.stringify(data, null, 2));
 
 // ── CONEXIÓN REAL CON GOOGLE SHEETS ──
