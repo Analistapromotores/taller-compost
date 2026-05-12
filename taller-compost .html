@@ -416,23 +416,26 @@
     });
   }
 
-  /* ── Enviar ── */
+/* ── Función enviar corregida (Reemplaza la tuya) ── */
   async function enviar(){
-    // Verificar cupos antes de enviar
-    if(getCuposLibres() === 0){
-      actualizarCupos(); return;
+    // 1. Verificar cupos reales antes de procesar
+    if(cuposDisponiblesGlobal <= 0){
+      alert("Lo sentimos, ya no quedan cupos disponibles.");
+      actualizarCupos(); 
+      return;
     }
 
-    const nombre   = document.getElementById('nombre').value.trim();
-    const cedula   = document.getElementById('cedula').value.trim().replace(/\D/g,'');
-    const telefono = document.getElementById('telefono').value.trim();
-    const barrio   = document.getElementById('barrio').value.trim();
+    const nombre    = document.getElementById('nombre').value.trim();
+    const cedula    = document.getElementById('cedula').value.trim().replace(/\D/g,'');
+    const telefono  = document.getElementById('telefono').value.trim();
+    const barrio    = document.getElementById('barrio').value.trim();
     const comunidadSel = document.getElementById('comunidad').value;
     const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
 
     let comunidad = comunidadSel;
     if(comunidadSel === 'otro') comunidad = comunidadOtro;
 
+    // 2. Validaciones
     let valid = true;
     showErr('nombre',    !nombre);    if(!nombre) valid=false;
     showErr('cedula',    cedula.length < 6); if(cedula.length < 6) valid=false;
@@ -447,7 +450,7 @@
 
     const btn = document.getElementById('btn-enviar');
     btn.disabled = true;
-    btn.textContent = '⏳ Enviando…';
+    btn.textContent = '⏳ Verificando datos...';
 
     const data = {
       nombre,
@@ -462,15 +465,47 @@
       timestamp:   Date.now()
     };
 
-    console.log('INSCRIPCION COMPOST:', JSON.stringify(data, null, 2));
+    try {
+      // 3. ENVÍO REAL (Sin el comentario /* */)
+      await fetch(APPS_SCRIPT_URL, {
+        method:'POST', 
+        mode:'no-cors',
+        headers:{'Content-Type':'text/plain'},
+        body: JSON.stringify(data)
+      });
 
-    /* ── CONECTA GOOGLE SHEETS AQUÍ ──
-    await fetch(APPS_SCRIPT_URL, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'text/plain'},
-      body: JSON.stringify(data)
-    });
-    */
+      // 4. VALIDACIÓN DE ÉXITO (Esperamos 2 segundos para confirmar que se guardó)
+      setTimeout(async () => {
+        const resCheck = await fetch(APPS_SCRIPT_URL);
+        const dataCheck = await resCheck.json();
+        
+        // Si el número de cupos libres bajó, es porque la cédula no estaba repetida
+        if (dataCheck.libres < cuposDisponiblesGlobal) {
+          actualizarCupos();
+          document.getElementById('form-section').style.display = 'none';
+          document.getElementById('success-section').classList.add('show');
+          document.getElementById('success-detail').innerHTML =
+            '<strong>Nombre:</strong> '    + escHtml(data.nombre)    + '<br>' +
+            '<strong>Cédula:</strong> '    + escHtml(data.cedula)    + '<br>' +
+            '<strong>Teléfono:</strong> '  + escHtml(data.telefono)  + '<br>' +
+            '<strong>Barrio:</strong> '    + escHtml(data.barrio)    + '<br>' +
+            '<strong>Comunidad:</strong> ' + escHtml(data.comunidad) + '<br>' +
+            '<strong>Registrado:</strong> '+ data.hora_inscripcion;
+        } else {
+          // Si el cupo no bajó, el Apps Script rechazó la cédula por duplicada
+          alert("❌ Error: Esta cédula ya se encuentra registrada para este taller.");
+          btn.disabled = false;
+          btn.textContent = '🌱 Confirmar mi inscripción';
+          actualizarCupos();
+        }
+      }, 2000);
+
+    } catch (error) {
+      alert("Hubo un error de conexión. Intenta de nuevo.");
+      btn.disabled = false;
+      btn.textContent = '🌱 Confirmar mi inscripción';
+    }
+  }
 
     // Descontar cupo
     setCuposUsados(getCuposUsados() + 1);
