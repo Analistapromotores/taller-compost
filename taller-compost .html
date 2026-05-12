@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taller de Compost — Inscríbete</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --earth:#3B2A1A;--soil:#6B4423;--bark:#8B5E3C;
+    --moss:#4A7C59;--leaf:#6AAF47;--lime:#B5D99C;
+    --cream:#F5F0E8;--parchment:#EDE4D0;--sun:#E8A838;
+    --white:#FDFBF7;--red:#C0392B;--red-soft:#FEF2F2;
+    --gray:#6B7280;
+  }
+  @keyframes floatLeaf{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+  html{scroll-behavior:smooth}
+  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--earth);min-height:100vh;overflow-x:hidden}
+
+  /* ── HERO ── */
+  .hero{
+    background:var(--earth);position:relative;overflow:hidden;
+    padding:3rem 1.5rem 4rem;text-align:center;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse at 20% 50%,rgba(74,124,89,.35) 0%,transparent 60%),
+      radial-gradient(ellipse at 80% 20%,rgba(106,175,71,.2) 0%,transparent 50%),
+      radial-gradient(ellipse at 60% 80%,rgba(232,168,56,.15) 0%,transparent 40%);
+    pointer-events:none;
+  }
+  .leaf-deco{position:absolute;font-size:4rem;opacity:.12;pointer-events:none;user-select:none}
+  .leaf-deco.l1{top:10%;left:5%;animation:floatLeaf 4s ease-in-out infinite}
+  .leaf-deco.l2{top:20%;right:8%;font-size:3rem;animation:floatLeaf 5s ease-in-out infinite 1s}
+  .leaf-deco.l3{bottom:15%;left:12%;font-size:2.5rem;animation:floatLeaf 6s ease-in-out infinite 2s}
+  .leaf-deco.l4{bottom:20%;right:6%;font-size:5rem;animation:floatLeaf 4.5s ease-in-out infinite .5s}
+
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(106,175,71,.2);border:1px solid rgba(106,175,71,.4);
+    color:var(--lime);font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+    padding:.45rem 1.1rem;border-radius:100px;margin-bottom:1.5rem;
+    animation:fadeUp .6s ease both;
+  }
+  .hero-badge span{width:7px;height:7px;background:var(--leaf);border-radius:50%;animation:pulse 2s infinite}
+
+  .hero h1{
+    font-family:'Fraunces',serif;font-size:clamp(2.4rem,7vw,4.5rem);font-weight:900;
+    color:var(--white);line-height:1.05;margin-bottom:.5rem;animation:fadeUp .7s ease .1s both;
+  }
+  .hero h1 em{font-style:italic;color:var(--sun);display:block}
+  .hero-sub{font-size:1.05rem;color:rgba(255,255,255,.65);margin-bottom:2rem;font-weight:300;animation:fadeUp .7s ease .2s both}
+
+  .hero-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:2.5rem;animation:fadeUp .7s ease .3s both}
+  .chip{
+    display:flex;align-items:center;gap:7px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.85);padding:.5rem 1rem;border-radius:100px;
+    font-size:.85rem;backdrop-filter:blur(4px);
+  }
+
+  /* Cupos counter */
+  .cupos-wrap{animation:fadeUp .7s ease .4s both}
+  .urgency{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--sun);color:var(--earth);
+    font-family:'Fraunces',serif;font-size:1rem;font-weight:700;
+    padding:.65rem 1.5rem;border-radius:12px;margin-bottom:.75rem;
+    animation:pulse 2.5s ease 1.2s infinite;
+  }
+  .cupos-bar-wrap{max-width:280px;margin:0 auto;text-align:center}
+  .cupos-label{font-size:.8rem;color:rgba(255,255,255,.6);margin-bottom:.4rem}
+  .cupos-bar{
+    background:rgba(255,255,255,.15);border-radius:100px;height:8px;overflow:hidden;
+  }
+  .cupos-fill{
+    height:100%;border-radius:100px;
+    background:linear-gradient(90deg,var(--leaf),var(--sun));
+    transition:width .5s ease;
+  }
+  .cupos-num{
+    font-family:'Fraunces',serif;font-size:.9rem;color:rgba(255,255,255,.8);
+    margin-top:.4rem;
+  }
+  .cupos-num strong{color:var(--sun)}
+
+  .divider{text-align:center;padding:1.5rem 0 .5rem;font-size:1.8rem;letter-spacing:.3em;color:var(--moss);opacity:.5}
+
+  /* Benefits */
+  .benefits{
+    max-width:700px;margin:0 auto;padding:2rem 1.5rem 1rem;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;
+  }
+  .benefit-card{
+    background:var(--white);border:1px solid rgba(107,68,35,.12);border-radius:16px;
+    padding:1.25rem;display:flex;flex-direction:column;align-items:center;
+    text-align:center;gap:8px;box-shadow:0 2px 12px rgba(59,42,26,.06);
+    transition:transform .2s,box-shadow .2s;
+  }
+  .benefit-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(59,42,26,.1)}
+  .benefit-icon{font-size:2rem}
+  .benefit-title{font-weight:600;font-size:.88rem;color:var(--earth)}
+  .benefit-desc{font-size:.76rem;color:var(--bark);line-height:1.5}
+
+  /* FORM */
+  .form-wrap{max-width:520px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
+  .form-card{
+    background:var(--white);border:1px solid rgba(107,68,35,.15);border-radius:24px;
+    padding:2.5rem 2rem;box-shadow:0 8px 48px rgba(59,42,26,.1);position:relative;overflow:hidden;
+  }
+  .form-card::before{
+    content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;
+    background:radial-gradient(circle,rgba(106,175,71,.12),transparent 70%);
+    border-radius:50%;pointer-events:none;
+  }
+
+  .form-title{font-family:'Fraunces',serif;font-size:1.55rem;font-weight:700;color:var(--earth);margin-bottom:.35rem}
+  .form-subtitle{font-size:.85rem;color:var(--bark);margin-bottom:1.75rem;line-height:1.5}
+
+  /* Cupos mini dentro del form */
+  .cupos-mini{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--parchment);border:1px solid rgba(107,68,35,.2);
+    border-radius:10px;padding:.65rem 1rem;margin-bottom:1.4rem;font-size:.83rem;
+  }
+  .cupos-mini-left{display:flex;align-items:center;gap:8px;color:var(--earth);font-weight:500}
+  .cupos-mini-num{
+    font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;
+    color:var(--moss);
+  }
+  .cupos-mini-num.urgente{color:var(--red);animation:blink 1s infinite}
+
+  .field-group{margin-bottom:1.1rem}
+  .field-label{display:block;font-size:.75rem;font-weight:500;color:var(--bark);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem}
+  .required{color:var(--red)}
+  input[type="text"],input[type="email"],input[type="tel"],input[type="number"],select,textarea{
+    width:100%;padding:.7rem 1rem;border:1.5px solid rgba(107,68,35,.2);border-radius:10px;
+    font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--earth);background:var(--cream);
+    outline:none;transition:border-color .2s,box-shadow .2s;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--moss);box-shadow:0 0 0 3px rgba(74,124,89,.12)}
+  input.err,select.err{border-color:var(--red)!important}
+  .field-error{font-size:.73rem;color:var(--red);margin-top:3px;display:none}
+  .field-error.show{display:block}
+
+  select{
+    appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B5E3C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;
+  }
+
+  /* Campo "otro" comunidad */
+  .otro-field{display:none;margin-top:.5rem}
+  .otro-field.show{display:block}
+
+  .btn-submit{
+    width:100%;padding:.9rem;background:var(--moss);color:#fff;
+    border:none;border-radius:12px;font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;
+    cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 4px 20px rgba(74,124,89,.3);margin-top:.5rem;
+  }
+  .btn-submit:hover:not(:disabled){background:var(--earth);transform:translateY(-1px);box-shadow:0 8px 28px rgba(59,42,26,.25)}
+  .btn-submit:active:not(:disabled){transform:scale(.98)}
+  .btn-submit:disabled{opacity:.5;cursor:not-allowed}
+  .privacy{font-size:.72rem;color:var(--bark);text-align:center;margin-top:.85rem;line-height:1.5}
+
+  /* LLENO */
+  .lleno-card{
+    display:none;text-align:center;padding:2rem 1rem;
+  }
+  .lleno-card.show{display:block}
+  .lleno-icon{font-size:3.5rem;margin-bottom:.75rem}
+  .lleno-card h2{font-family:'Fraunces',serif;font-size:1.5rem;color:var(--red);margin-bottom:.5rem}
+  .lleno-card p{font-size:.88rem;color:var(--bark);line-height:1.7}
+
+  /* SUCCESS */
+  .success-card{display:none;text-align:center;padding:2rem 1rem;animation:fadeUp .6s ease both}
+  .success-card.show{display:block}
+  .success-icon{font-size:4rem;margin-bottom:1rem}
+  .success-card h2{font-family:'Fraunces',serif;font-size:1.6rem;color:var(--earth);margin-bottom:.5rem}
+  .success-card p{font-size:.9rem;color:var(--bark);line-height:1.7}
+  .success-detail{
+    margin-top:1.25rem;background:var(--parchment);border:1px solid rgba(107,68,35,.15);
+    border-radius:12px;padding:1rem;text-align:left;font-size:.82rem;color:var(--bark);line-height:2.1;
+  }
+  .success-detail strong{color:var(--earth)}
+
+  footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--bark);opacity:.7;border-top:1px solid rgba(107,68,35,.1)}
+
+  @media(max-width:480px){
+    .form-card{padding:1.75rem 1.25rem;border-radius:18px}
+    .hero h1{font-size:2.2rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="leaf-deco l1">🌿</div>
+  <div class="leaf-deco l2">🍃</div>
+  <div class="leaf-deco l3">🌱</div>
+  <div class="leaf-deco l4">🍂</div>
+
+  <div class="hero-badge"><span></span>Taller Práctico · Presencial</div>
+
+  <h1>Taller de <em>Compost</em></h1>
+  <p class="hero-sub">Aprende a transformar residuos orgánicos en abono natural para tus plantas</p>
+
+  <div class="hero-chips">
+    <div class="chip">⏱ 2 horas de duración</div>
+    <div class="chip">🥗 Incluye refrigerio</div>
+    <div class="chip">🌱 100% práctico</div>
+    <div class="chip">♻️ Sin costo</div>
+  </div>
+
+  <div class="cupos-wrap">
+    <div class="urgency">🔥 ¡Cupos limitados — Inscríbete ya!</div>
+    <div class="cupos-bar-wrap">
+      <div class="cupos-label">Disponibilidad de cupos</div>
+      <div class="cupos-bar"><div class="cupos-fill" id="hero-bar" style="width:0%"></div></div>
+      <div class="cupos-num">Quedan <strong id="hero-cupos-num">10</strong> de 10 cupos</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">🌿 · 🌱 · 🍃</div>
+
+<!-- BENEFITS -->
+<div class="benefits">
+  <div class="benefit-card"><div class="benefit-icon">🪱</div><div class="benefit-title">Aprende haciendo</div><div class="benefit-desc">Taller 100% práctico, manos a la tierra desde el primer minuto</div></div>
+  <div class="benefit-card"><div class="benefit-icon">🥗</div><div class="benefit-title">Refrigerio incluido</div><div class="benefit-desc">Disfruta un refrigerio mientras compartes con tu comunidad</div></div>
+  <div class="benefit-card"><div class="benefit-icon">🌍</div><div class="benefit-title">Impacto real</div><div class="benefit-desc">Reduce residuos y transforma tu hogar en un espacio sostenible</div></div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+  <div class="form-card">
+
+    <!-- LLENO -->
+    <div class="lleno-card" id="lleno-section">
+      <div class="lleno-icon">😔</div>
+      <h2>¡Cupos agotados!</h2>
+      <p>Lo sentimos, los 10 cupos del taller ya fueron reservados.<br>Comunícate con nosotros para quedar en lista de espera o conocer la próxima fecha.</p>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div id="form-section">
+      <div class="form-title">🌱 Reserva tu cupo</div>
+      <p class="form-subtitle">1 cupo por persona · Completa el formulario y asegura tu lugar.</p>
+
+      <!-- Cupos mini -->
+      <div class="cupos-mini">
+        <div class="cupos-mini-left">🪑 Cupos disponibles</div>
+        <div class="cupos-mini-num" id="form-cupos-num">10 / 10</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="nombre">Nombre completo <span class="required">*</span></label>
+        <input type="text" id="nombre" placeholder="Ej. María González Pérez">
+        <div class="field-error" id="err-nombre">Por favor ingresa tu nombre completo</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="cedula">Número de cédula <span class="required">*</span></label>
+        <input type="text" id="cedula" placeholder="Ej. 1234567890" inputmode="numeric" maxlength="12">
+        <div class="field-error" id="err-cedula">Ingresa un número de cédula válido</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="telefono">Teléfono / WhatsApp <span class="required">*</span></label>
+        <input type="tel" id="telefono" placeholder="+57 300 000 0000">
+        <div class="field-error" id="err-telefono">Ingresa un número de contacto válido</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="email">Correo electrónico</label>
+        <input type="email" id="email" placeholder="tu@correo.com (opcional)">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="barrio">Barrio / Municipio <span class="required">*</span></label>
+        <input type="text" id="barrio" placeholder="Ej. El Poblado, Cali">
+        <div class="field-error" id="err-barrio">Ingresa tu barrio o municipio</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="comunidad">Tipo de comunidad a la que perteneces <span class="required">*</span></label>
+        <select id="comunidad" onchange="onComunidad()">
+          <option value="">Selecciona una opción…</option>
+          <option value="Junta de Acción Comunal (JAC)">Junta de Acción Comunal (JAC)</option>
+          <option value="Comunidad Indígena">Comunidad Indígena</option>
+          <option value="Comunidad Afrodescendiente">Comunidad Afrodescendiente</option>
+          <option value="Asociación de Recicladores">Asociación de Recicladores</option>
+          <option value="Institución Educativa">Institución Educativa</option>
+          <option value="Organización Ambiental">Organización Ambiental</option>
+          <option value="Grupo de Mujeres">Grupo de Mujeres</option>
+          <option value="Adulto Mayor">Grupo Adulto Mayor</option>
+          <option value="Comunidad LGBTIQ+">Comunidad LGBTIQ+</option>
+          <option value="Empresa / Negocio">Empresa / Negocio</option>
+          <option value="Persona Natural">Persona Natural (sin organización)</option>
+          <option value="otro">Otro…</option>
+        </select>
+        <div class="field-error" id="err-comunidad">Selecciona el tipo de comunidad</div>
+        <div class="otro-field" id="otro-wrap">
+          <input type="text" id="comunidad-otro" placeholder="Escribe tu comunidad aquí…">
+          <div class="field-error" id="err-otro">Describe tu comunidad</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="como">¿Cómo te enteraste del taller?</label>
+        <select id="como">
+          <option value="">Selecciona una opción</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Un amigo o familiar">Un amigo / familiar</option>
+          <option value="Volante o afiche">Volante / afiche</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <button class="btn-submit" id="btn-enviar" onclick="enviar()">
+        🌱 Confirmar mi inscripción
+      </button>
+      <p class="privacy">🔒 Tu información es confidencial y solo se usará para coordinar el taller.</p>
+    </div>
+
+    <!-- ÉXITO -->
+    <div class="success-card" id="success-section">
+      <div class="success-icon">🌿</div>
+      <h2>¡Inscripción confirmada!</h2>
+      <p>Tu cupo ha sido reservado exitosamente. Pronto recibirás los detalles del taller por WhatsApp.</p>
+      <div class="success-detail" id="success-detail"></div>
+      <p style="margin-top:1rem;font-size:.82rem;color:var(--moss);font-weight:500">♻️ ¡Nos vemos en el taller! Recuerda llegar puntual.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer>🌱 Taller de Compost · Todos los derechos reservados</footer>
+
+<script>
+  // ═══════════════════════════════════════
+  // ⚙️ CONFIGURACIÓN
+  const TOTAL_CUPOS = 10;
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/TU_DEPLOYMENT_ID/exec';
+  // ═══════════════════════════════════════
+
+  /* ── Cupos en localStorage ── */
+  function getCuposUsados(){
+    return parseInt(localStorage.getItem('compost_inscritos') || '0');
+  }
+  function setCuposUsados(n){
+    localStorage.setItem('compost_inscritos', n.toString());
+  }
+  function getCuposLibres(){
+    return Math.max(0, TOTAL_CUPOS - getCuposUsados());
+  }
+
+  /* ── Actualizar UI de cupos ── */
+  function actualizarCupos(){
+    const libres = getCuposLibres();
+    const usados = getCuposUsados();
+    const pct    = (usados / TOTAL_CUPOS) * 100;
+
+    // Hero bar
+    document.getElementById('hero-bar').style.width = pct + '%';
+    document.getElementById('hero-cupos-num').textContent = libres;
+
+    // Form mini
+    const miniEl = document.getElementById('form-cupos-num');
+    miniEl.textContent = libres + ' / ' + TOTAL_CUPOS;
+    miniEl.classList.toggle('urgente', libres <= 3);
+
+    // Si no hay cupos → mostrar pantalla lleno
+    if(libres === 0){
+      document.getElementById('form-section').style.display = 'none';
+      document.getElementById('lleno-section').classList.add('show');
+    }
+  }
+
+  /* ── Comunidad "otro" ── */
+  function onComunidad(){
+    const val = document.getElementById('comunidad').value;
+    const wrap = document.getElementById('otro-wrap');
+    wrap.classList.toggle('show', val === 'otro');
+    document.getElementById('comunidad').classList.remove('err');
+    document.getElementById('err-comunidad').classList.remove('show');
+  }
+
+  /* ── Validación ── */
+  function showErr(id, show){
+    const errEl = document.getElementById('err-'+id);
+    const inp   = document.getElementById(id);
+    if(errEl) errEl.classList.toggle('show', show);
+    if(inp)   inp.classList.toggle('err', show);
+  }
+
+  /* ── Timestamp ── */
+  function getNow(){
+    return new Date().toLocaleString('es-CO',{
+      weekday:'long',year:'numeric',month:'long',day:'numeric',
+      hour:'2-digit',minute:'2-digit'
+    });
+  }
+
+  /* ── Enviar ── */
+  async function enviar(){
+    // Verificar cupos antes de enviar
+    if(getCuposLibres() === 0){
+      actualizarCupos(); return;
+    }
+
+    const nombre   = document.getElementById('nombre').value.trim();
+    const cedula   = document.getElementById('cedula').value.trim().replace(/\D/g,'');
+    const telefono = document.getElementById('telefono').value.trim();
+    const barrio   = document.getElementById('barrio').value.trim();
+    const comunidadSel = document.getElementById('comunidad').value;
+    const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
+
+    let comunidad = comunidadSel;
+    if(comunidadSel === 'otro') comunidad = comunidadOtro;
+
+    let valid = true;
+    showErr('nombre',    !nombre);    if(!nombre) valid=false;
+    showErr('cedula',    cedula.length < 6); if(cedula.length < 6) valid=false;
+    showErr('telefono',  telefono.length < 7); if(telefono.length < 7) valid=false;
+    showErr('barrio',    !barrio);    if(!barrio) valid=false;
+    showErr('comunidad', !comunidadSel); if(!comunidadSel) valid=false;
+    if(comunidadSel === 'otro'){
+      showErr('otro', !comunidadOtro);
+      if(!comunidadOtro) valid=false;
+    }
+    if(!valid) return;
+
+    const btn = document.getElementById('btn-enviar');
+    btn.disabled = true;
+    btn.textContent = '⏳ Enviando…';
+
+    const data = {
+      nombre,
+      cedula,
+      telefono,
+      email:       document.getElementById('email').value.trim() || 'No indicado',
+      barrio,
+      comunidad,
+      como_entero: document.getElementById('como').value || 'No indicado',
+      refrigerio:  'Sí — incluido',
+      hora_inscripcion: getNow(),
+      timestamp:   Date.now()
+    };
+
+    console.log('INSCRIPCION COMPOST:', JSON.stringify(data, null, 2));
+
+    /* ── CONECTA GOOGLE SHEETS AQUÍ ──
+    await fetch(APPS_SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify(data)
+    });
+    */
+
+    // Descontar cupo
+    setCuposUsados(getCuposUsados() + 1);
+    actualizarCupos();
+
+    // Mostrar éxito
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('success-section').classList.add('show');
+    document.getElementById('success-detail').innerHTML =
+      '<strong>Nombre:</strong> '    + escHtml(data.nombre)    + '<br>' +
+      '<strong>Cédula:</strong> '    + escHtml(data.cedula)    + '<br>' +
+      '<strong>Teléfono:</strong> '  + escHtml(data.telefono)  + '<br>' +
+      '<strong>Barrio:</strong> '    + escHtml(data.barrio)    + '<br>' +
+      '<strong>Comunidad:</strong> ' + escHtml(data.comunidad) + '<br>' +
+      '<strong>Refrigerio:</strong> Sí ✅<br>' +
+      '<strong>Registrado:</strong> '+ data.hora_inscripcion;
+  }
+
+  function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+  // Limpiar errores al escribir
+  ['nombre','cedula','telefono','barrio'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('input',()=>showErr(id,false));
+  });
+  document.getElementById('comunidad-otro').addEventListener('input',()=>showErr('otro',false));
+
+  // Init
+  actualizarCupos();
+</script>
+</body>
+</html>
