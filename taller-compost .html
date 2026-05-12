@@ -1,287 +1,359 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taller de Compost — Inscríbete</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --earth:#3B2A1A;--soil:#6B4423;--bark:#8B5E3C;
-    --moss:#4A7C59;--leaf:#6AAF47;--lime:#B5D99C;
-    --cream:#F5F0E8;--parchment:#EDE4D0;--sun:#E8A838;
-    --white:#FDFBF7;--red:#C0392B;--red-soft:#FEF2F2;
-    --gray:#6B7280;
-  }
-  @keyframes floatLeaf{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripción Taller de Compost</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --earth: #3B2A1A; --soil: #6B4423; --bark: #8B5E3C;
+            --moss: #4A7C59; --leaf: #6AAF47; --lime: #B5D99C;
+            --cream: #F5F0E8; --parchment: #EDE4D0; --sun: #E8A838;
+            --white: #FDFBF7; --red: #C0392B; --red-soft: #FEF2F2;
+        }
 
-  html{scroll-behavior:smooth}
-  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--earth);min-height:100vh;overflow-x:hidden}
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
 
-  .hero{background:var(--earth);position:relative;overflow:hidden;padding:3rem 1.5rem 4rem;text-align:center;}
-  .hero::before{
-    content:'';position:absolute;inset:0;
-    background:
-      radial-gradient(ellipse at 20% 50%,rgba(74,124,89,.35) 0%,transparent 60%),
-      radial-gradient(ellipse at 80% 20%,rgba(106,175,71,.2) 0%,transparent 50%),
-      radial-gradient(ellipse at 60% 80%,rgba(232,168,56,.15) 0%,transparent 40%);
-    pointer-events:none;
-  }
-  .leaf-deco{position:absolute;font-size:4rem;opacity:.12;pointer-events:none;user-select:none}
-  .leaf-deco.l1{top:10%;left:5%;animation:floatLeaf 4s ease-in-out infinite}
-  .leaf-deco.l2{top:20%;right:8%;font-size:3rem;animation:floatLeaf 5s ease-in-out infinite 1s}
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--earth);
+            line-height: 1.6;
+        }
 
-  .hero-badge{
-    display:inline-flex;align-items:center;gap:8px;
-    background:rgba(106,175,71,.2);border:1px solid rgba(106,175,71,.4);
-    color:var(--lime);font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
-    padding:.45rem 1.1rem;border-radius:100px;margin-bottom:1.5rem;animation:fadeUp .6s ease both;
-  }
-  .hero-badge span{width:7px;height:7px;background:var(--leaf);border-radius:50%;animation:pulse 2s infinite}
+        .hero {
+            background: var(--earth);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            position: relative;
+        }
 
-  .hero h1{font-family:'Fraunces',serif;font-size:clamp(2.4rem,7vw,4.5rem);font-weight:900;color:var(--white);line-height:1.05;margin-bottom:.5rem;animation:fadeUp .7s ease .1s both;}
-  .hero h1 em{font-style:italic;color:var(--sun);display:block}
-  .hero-sub{font-size:1.05rem;color:rgba(255,255,255,.65);margin-bottom:2rem;animation:fadeUp .7s ease .2s both}
+        .hero h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
 
-  .hero-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:2.5rem;animation:fadeUp .7s ease .3s both}
-  .chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);padding:.5rem 1rem;border-radius:100px;font-size:.85rem;backdrop-filter:blur(4px);}
+        .hero h1 em { color: var(--sun); font-style: italic; }
 
-  .urgency{display:inline-flex;align-items:center;gap:10px;background:var(--sun);color:var(--earth);font-family:'Fraunces',serif;font-size:1rem;font-weight:700;padding:.65rem 1.5rem;border-radius:12px;margin-bottom:.75rem;animation:pulse 2.5s ease 1.2s infinite;}
-  .cupos-bar-wrap{max-width:280px;margin:0 auto;text-align:center}
-  .cupos-bar{background:rgba(255,255,255,.15);border-radius:100px;height:8px;overflow:hidden;margin: 5px 0;}
-  .cupos-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--leaf),var(--sun));transition:width .5s ease;width:0%;}
-  .cupos-num{font-family:'Fraunces',serif;font-size:.9rem;color:rgba(255,255,255,.8);}
+        .cupos-container {
+            max-width: 300px;
+            margin: 1.5rem auto;
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 15px;
+        }
 
-  .benefits{max-width:700px;margin:0 auto;padding:2rem 1.5rem 1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;}
-  .benefit-card{background:var(--white);border:1px solid rgba(107,68,35,.12);border-radius:16px;padding:1.25rem;text-align:center;box-shadow:0 2px 12px rgba(59,42,26,.06);}
+        .bar-bg {
+            background: rgba(255,255,255,0.2);
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
 
-  .form-wrap{max-width:520px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
-  .form-card{background:var(--white);border:1px solid rgba(107,68,35,.15);border-radius:24px;padding:2.5rem 2rem;box-shadow:0 8px 48px rgba(59,42,26,.1);position:relative;overflow:hidden;}
+        .bar-fill {
+            background: var(--leaf);
+            height: 100%;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
 
-  .cupos-mini{display:flex;align-items:center;justify-content:space-between;background:var(--parchment);border:1px solid rgba(107,68,35,.2);border-radius:10px;padding:.65rem 1rem;margin-bottom:1.4rem;font-size:.83rem;}
-  .cupos-mini-num{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--moss);}
-  .cupos-mini-num.urgente{color:var(--red);animation:blink 1s infinite}
+        .form-card {
+            max-width: 500px;
+            margin: -2rem auto 3rem;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
 
-  .field-group{margin-bottom:1.1rem}
-  .field-label{display:block;font-size:.75rem;font-weight:500;color:var(--bark);text-transform:uppercase;margin-bottom:.4rem}
-  input, select{width:100%;padding:.7rem 1rem;border:1.5px solid rgba(107,68,35,.2);border-radius:10px;font-size:.95rem;outline:none;}
-  input:focus, select:focus{border-color:var(--moss);box-shadow:0 0 0 3px rgba(74,124,89,.12)}
-  input.err, select.err{border-color:var(--red)!important}
-  .field-error{font-size:.73rem;color:var(--red);margin-top:3px;display:none}
-  .field-error.show{display:block}
+        .field-group { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; color: var(--bark); margin-bottom: 0.4rem; }
+        
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--parchment);
+            border-radius: 10px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
 
-  .btn-submit{width:100%;padding:.9rem;background:var(--moss);color:#fff;border:none;border-radius:12px;font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .2s;}
-  .btn-submit:hover:not(:disabled){background:var(--earth);transform:translateY(-1px);}
-  .btn-submit:disabled{opacity:.5;cursor:not-allowed}
+        input:focus, select:focus { border-color: var(--moss); }
+        input.err { border-color: var(--red); background: var(--red-soft); }
 
-  .lleno-card, .success-card {display:none;text-align:center;padding:2rem 1rem;}
-  .show {display:block !important;}
-  .success-detail{margin-top:1.25rem;background:var(--parchment);border:1px solid rgba(107,68,35,.15);border-radius:12px;padding:1rem;text-align:left;font-size:.82rem;line-height:1.6;}
-  .otro-field{display:none;margin-top:.5rem}
-  .otro-field.show{display:block}
-</style>
+        .field-error { color: var(--red); font-size: 0.75rem; margin-top: 4px; display: none; }
+        .field-error.show { display: block; }
+
+        .otro-field { display: none; margin-top: 10px; }
+        .otro-field.show { display: block; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--moss);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Fraunces', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover:not(:disabled) { background: var(--earth); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .cupos-mini-num.urgente { color: var(--red); animation: blink 1s infinite; font-weight: bold; }
+
+        #success-section, #lleno-section { display: none; text-align: center; padding: 2rem 0; }
+        .show { display: block !important; }
+        
+        .success-box { background: var(--parchment); padding: 1rem; border-radius: 10px; margin-top: 1rem; text-align: left; font-size: 0.9rem; }
+    </style>
 </head>
 <body>
 
 <section class="hero">
-  <div class="leaf-deco l1">🌿</div>
-  <div class="leaf-deco l2">🍃</div>
-  <div class="hero-badge"><span></span>Taller Práctico · Presencial</div>
-  <h1>Taller de <em>Compost</em></h1>
-  <p class="hero-sub">Aprende a transformar residuos orgánicos en abono natural</p>
-  <div class="hero-chips">
-    <div class="chip">⏱ 2 horas</div>
-    <div class="chip">🥗 Refrigerio</div>
-    <div class="chip">♻️ Sin costo</div>
-  </div>
-  <div class="cupos-wrap">
-    <div class="urgency">🔥 ¡Cupos limitados!</div>
-    <div class="cupos-bar-wrap">
-      <div class="cupos-bar"><div class="cupos-fill" id="hero-bar"></div></div>
-      <div class="cupos-num">Quedan <strong id="hero-cupos-num">--</strong> de 10 cupos</div>
+    <h1>Taller de <em>Compost</em></h1>
+    <p>Aprende a nutrir la tierra de forma natural</p>
+    <div class="cupos-container">
+        <p>Cupos disponibles: <span id="hero-cupos-num">--</span>/10</p>
+        <div class="bar-bg"><div class="bar-fill" id="hero-bar"></div></div>
     </div>
-  </div>
 </section>
 
-<div class="form-wrap">
-  <div class="form-card">
-    <div id="lleno-section" class="lleno-card">
-      <div style="font-size:3rem">😔</div>
-      <h2 style="color:var(--red)">¡Cupos agotados!</h2>
-      <p>Lo sentimos, ya completamos el grupo. Escríbenos para lista de espera.</p>
-    </div>
-
+<div class="form-card">
+    <!-- SECCIÓN FORMULARIO -->
     <div id="form-section">
-      <div class="cupos-mini">
-        <span>🪑 Cupos disponibles:</span>
-        <span class="cupos-mini-num" id="form-cupos-num">-- / 10</span>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Nombre completo *</label>
-        <input type="text" id="nombre">
-        <div class="field-error" id="err-nombre">Ingresa tu nombre</div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Cédula *</label>
-        <input type="text" id="cedula" inputmode="numeric">
-        <div class="field-error" id="err-cedula">Cédula inválida</div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Teléfono *</label>
-        <input type="tel" id="telefono">
-        <div class="field-error" id="err-telefono">Ingresa un teléfono</div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Email</label>
-        <input type="email" id="email" placeholder="Opcional">
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Barrio / Municipio *</label>
-        <input type="text" id="barrio">
-        <div class="field-error" id="err-barrio">Dinos de dónde vienes</div>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label">Comunidad *</label>
-        <select id="comunidad" onchange="onComunidad()">
-          <option value="">Selecciona...</option>
-          <option value="Persona Natural">Persona Natural</option>
-          <option value="JAC">Junta de Acción Comunal</option>
-          <option value="Institución Educativa">Institución Educativa</option>
-          <option value="otro">Otro...</option>
-        </select>
-        <div class="otro-field" id="otro-wrap">
-          <input type="text" id="comunidad-otro" placeholder="¿Cuál?">
+        <div style="margin-bottom: 1.5rem; text-align: center;">
+            <span id="form-cupos-num" class="cupos-mini-num">Cargando cupos...</span>
         </div>
-      </div>
 
-      <div class="field-group">
-        <label class="field-label">¿Cómo te enteraste?</label>
-        <select id="como">
-          <option value="WhatsApp">WhatsApp</option>
-          <option value="Instagram">Instagram</option>
-          <option value="Amigo">Amigo/Familiar</option>
-        </select>
-      </div>
+        <div class="field-group">
+            <label>Nombre Completo *</label>
+            <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+            <div class="field-error" id="err-nombre">Este campo es obligatorio</div>
+        </div>
 
-      <button class="btn-submit" id="btn-enviar" onclick="enviar()">🌱 Confirmar mi inscripción</button>
+        <div class="field-group">
+            <label>Cédula de Ciudadanía *</label>
+            <input type="text" id="cedula" inputmode="numeric" placeholder="Solo números">
+            <div class="field-error" id="err-cedula">Ingresa una CC válida (mín. 6 dígitos)</div>
+        </div>
+
+        <div class="field-group">
+            <label>Teléfono / WhatsApp *</label>
+            <input type="tel" id="telefono" placeholder="Ej: 3001234567">
+            <div class="field-error" id="err-telefono">Ingresa un número de contacto</div>
+        </div>
+
+        <div class="field-group">
+            <label>Correo Electrónico *</label>
+            <input type="email" id="email" placeholder="usuario@correo.com">
+            <div class="field-error" id="err-email">Ingresa un correo electrónico válido</div>
+        </div>
+
+        <div class="field-group">
+            <label>Barrio / Municipio *</label>
+            <input type="text" id="barrio" placeholder="¿Dónde vives?">
+            <div class="field-error" id="err-barrio">Este campo es obligatorio</div>
+        </div>
+
+        <div class="field-group">
+            <label>Comunidad / Organización *</label>
+            <select id="comunidad" onchange="toggleOtro()">
+                <option value="">Selecciona una opción...</option>
+                <option value="Persona Natural">Persona Natural</option>
+                <option value="JAC">JAC (Junta de Acción Comunal)</option>
+                <option value="Institución Educativa">Institución Educativa</option>
+                <option value="otro">Otro (¿Cuál?)</option>
+            </select>
+            <div class="field-error" id="err-comunidad">Selecciona una opción</div>
+            
+            <div id="otro-wrap" class="otro-field">
+                <input type="text" id="comunidad-otro" placeholder="Especifica cuál...">
+            </div>
+        </div>
+
+        <div class="field-group">
+            <label>¿Cómo te enteraste del taller?</label>
+            <select id="como">
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Redes Sociales">Redes Sociales</option>
+                <option value="Voz a voz">Un amigo/familiar</option>
+                <option value="Publicidad">Publicidad física</option>
+            </select>
+        </div>
+
+        <button class="btn-submit" id="btn-enviar" onclick="enviar()">🌱 CONFIRMAR INSCRIPCIÓN</button>
     </div>
 
-    <div id="success-section" class="success-card">
-      <div style="font-size:3rem">🌿</div>
-      <h2>¡Inscripción exitosa!</h2>
-      <p>Tu cupo ha sido reservado. Te esperamos.</p>
-      <div class="success-detail" id="success-detail"></div>
+    <!-- SECCIÓN ÉXITO -->
+    <div id="success-section">
+        <div style="font-size: 4rem;">✅</div>
+        <h2 style="color: var(--moss);">¡Inscripción Exitosa!</h2>
+        <p>Tu lugar en el taller ha sido reservado.</p>
+        <div id="success-detail" class="success-box"></div>
+        <p style="margin-top:1rem; font-size:0.8rem; color:gray;">Ya puedes cerrar esta ventana.</p>
     </div>
-  </div>
+
+    <!-- SECCIÓN CUPO LLENO -->
+    <div id="lleno-section">
+        <div style="font-size: 4rem;">⏳</div>
+        <h2 style="color: var(--red);">Cupos Agotados</h2>
+        <p>Lo sentimos, hemos alcanzado el límite de 10 personas para esta sesión.</p>
+        <button class="btn-submit" style="margin-top:1rem; background:var(--earth)" onclick="location.reload()">ACTUALIZAR</button>
+    </div>
 </div>
 
 <script>
-  // CONFIGURACIÓN (Pega aquí tu URL de Apps Script)
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPdYvOoWMMX8Yk19aM6gSUiI4JmfLe9vCtCvngZSwHHaIk4Q12n-m0JRQsV7TZ5WPTQQ/exec';
-  let cuposGlobal = 10;
+    // URL DE TU GOOGLE APPS SCRIPT (Asegúrate de que sea la última versión implementada)
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPdYvOoWMMX8Yk19aM6gSUiI4JmfLe9vCtCvngZSwHHaIk4Q12n-m0JRQsV7TZ5WPTQQ/exec';
+    let cuposGlobal = 10;
 
-  async function actualizarCupos() {
-    try {
-      const res = await fetch(APPS_SCRIPT_URL);
-      const data = await res.json();
-      cuposGlobal = data.libres;
-      
-      const pct = ((10 - cuposGlobal) / 10) * 100;
-      document.getElementById('hero-bar').style.width = pct + '%';
-      document.getElementById('hero-cupos-num').textContent = cuposGlobal;
-      document.getElementById('form-cupos-num').textContent = cuposGlobal + ' / 10';
-      
-      if(cuposGlobal <= 3) document.getElementById('form-cupos-num').classList.add('urgente');
-      if(cuposGlobal <= 0) {
-        document.getElementById('form-section').style.display = 'none';
-        document.getElementById('lleno-section').classList.add('show');
-      }
-    } catch(e) { console.error("Error cupos:", e); }
-  }
+    // 1. CARGAR CUPOS AL INICIAR
+    async function actualizarCupos() {
+        try {
+            const res = await fetch(APPS_SCRIPT_URL);
+            const data = await res.json();
+            
+            cuposGlobal = data.libres;
+            
+            // Actualizar interfaz
+            document.getElementById('hero-cupos-num').textContent = cuposGlobal;
+            document.getElementById('form-cupos-num').textContent = `Cupos disponibles: ${cuposGlobal} / 10`;
+            
+            const pct = ((10 - cuposGlobal) / 10) * 100;
+            document.getElementById('hero-bar').style.width = pct + '%';
 
-  function onComunidad() {
-    const val = document.getElementById('comunidad').value;
-    document.getElementById('otro-wrap').classList.toggle('show', val === 'otro');
-  }
-
-  function showErr(id, show) {
-    const el = document.getElementById('err-' + id);
-    const inp = document.getElementById(id);
-    if(el) el.classList.toggle('show', show);
-    if(inp) inp.classList.toggle('err', show);
-  }
-
-  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-
-  async function enviar() {
-    if(cuposGlobal <= 0) return alert("Lo sentimos, ya no hay cupos.");
-
-    const nombre = document.getElementById('nombre').value.trim();
-    const cedula = document.getElementById('cedula').value.trim().replace(/\D/g,'');
-    const telefono = document.getElementById('telefono').value.trim();
-    const barrio = document.getElementById('barrio').value.trim();
-    const comunidadSel = document.getElementById('comunidad').value;
-    const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
-    
-    let valid = true;
-    if(!nombre) { showErr('nombre', true); valid = false; }
-    if(cedula.length < 6) { showErr('cedula', true); valid = false; }
-    if(!telefono) { showErr('telefono', true); valid = false; }
-    if(!barrio) { showErr('barrio', true); valid = false; }
-    if(!comunidadSel) { showErr('comunidad', true); valid = false; }
-    if(!valid) return;
-
-    const btn = document.getElementById('btn-enviar');
-    btn.disabled = true;
-    btn.textContent = '⏳ Registrando...';
-
-    const payload = {
-      nombre, cedula, telefono, barrio,
-      email: document.getElementById('email').value || 'No indicado',
-      comunidad: comunidadSel === 'otro' ? comunidadOtro : comunidadSel,
-      como_entero: document.getElementById('como').value,
-      refrigerio: 'Sí',
-      hora_inscripcion: new Date().toLocaleString(),
-      timestamp: Date.now()
-    };
-
-    try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(payload)
-      });
-
-      // Confirmación
-      setTimeout(async () => {
-        await actualizarCupos();
-        document.getElementById('form-section').style.display = 'none';
-        document.getElementById('success-section').classList.add('show');
-        document.getElementById('success-detail').innerHTML = `
-          <strong>Nombre:</strong> ${esc(payload.nombre)}<br>
-          <strong>Cédula:</strong> ${esc(payload.cedula)}<br>
-          <strong>Fecha:</strong> ${payload.hora_inscripcion}
-        `;
-      }, 2000);
-    } catch(e) {
-      alert("Error al enviar. Intenta de nuevo.");
-      btn.disabled = false;
-      btn.textContent = '🌱 Confirmar mi inscripción';
+            if(cuposGlobal <= 3) document.getElementById('form-cupos-num').classList.add('urgente');
+            
+            if(cuposGlobal <= 0) {
+                document.getElementById('form-section').style.display = 'none';
+                document.getElementById('lleno-section').classList.add('show');
+            }
+        } catch(e) {
+            console.error("Error cargando cupos:", e);
+            document.getElementById('form-cupos-num').textContent = "Error al conectar con la base de datos";
+        }
     }
-  }
 
-  // Carga inicial
-  actualizarCupos();
+    function toggleOtro() {
+        const sel = document.getElementById('comunidad').value;
+        document.getElementById('otro-wrap').classList.toggle('show', sel === 'otro');
+    }
+
+    function showErr(id, show) {
+        const input = document.getElementById(id);
+        const msg = document.getElementById('err-' + id);
+        if(input) input.classList.toggle('err', show);
+        if(msg) msg.classList.toggle('show', show);
+    }
+
+    function validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // 2. FUNCIÓN DE ENVÍO
+    async function enviar() {
+        if(cuposGlobal <= 0) return alert("Lo sentimos, ya no hay cupos.");
+
+        const btn = document.getElementById('btn-enviar');
+        const fields = ['nombre', 'cedula', 'telefono', 'email', 'barrio', 'comunidad'];
+        
+        // Limpiar errores
+        fields.forEach(f => showErr(f, false));
+
+        // Captura de datos
+        const nombre = document.getElementById('nombre').value.trim();
+        const cedula = document.getElementById('cedula').value.trim().replace(/\D/g,'');
+        const telefono = document.getElementById('telefono').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const barrio = document.getElementById('barrio').value.trim();
+        const comunidadSel = document.getElementById('comunidad').value;
+        const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
+
+        // Validaciones
+        let esValido = true;
+        if(!nombre) { showErr('nombre', true); esValido = false; }
+        if(cedula.length < 6) { showErr('cedula', true); esValido = false; }
+        if(!telefono) { showErr('telefono', true); esValido = false; }
+        if(!validarEmail(email)) { showErr('email', true); esValido = false; }
+        if(!barrio) { showErr('barrio', true); esValido = false; }
+        if(!comunidadSel) { showErr('comunidad', true); esValido = false; }
+        if(comunidadSel === 'otro' && !comunidadOtro) { showErr('comunidad', true); esValido = false; }
+
+        if(!esValido) return;
+
+        // Bloquear botón
+        btn.disabled = true;
+        btn.textContent = '⏳ VERIFICANDO DATOS...';
+
+        const payload = {
+            nombre,
+            cedula,
+            telefono,
+            email,
+            barrio,
+            comunidad: comunidadSel === 'otro' ? comunidadOtro : comunidadSel,
+            como_entero: document.getElementById('como').value,
+            refrigerio: "Sí",
+            hora_inscripcion: new Date().toLocaleString(),
+            timestamp: Date.now()
+        };
+
+        try {
+            // Envío a Google Sheets (no-cors para evitar bloqueos)
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            });
+
+            // Truco de verificación: Esperar un momento y re-consultar cupos
+            // Si el cupo NO bajó, asumimos que el script rechazó la CC por duplicada
+            setTimeout(async () => {
+                const res = await fetch(APPS_SCRIPT_URL);
+                const dataFinal = await res.json();
+
+                if (dataFinal.libres < cuposGlobal) {
+                    // ÉXITO: El cupo disminuyó
+                    document.getElementById('form-section').style.display = 'none';
+                    document.getElementById('success-section').classList.add('show');
+                    document.getElementById('success-detail').innerHTML = `
+                        <strong>Registrado a nombre de:</strong><br>${nombre}<br>
+                        <strong>Documento:</strong> ${cedula}<br>
+                        <strong>Fecha:</strong> ${payload.hora_inscripcion}
+                    `;
+                    actualizarCupos();
+                } else {
+                    // FALLO: El cupo sigue igual (Probable duplicado)
+                    alert("¡HOLA! Ya te inscribiste anteriormente con esta cédula. Por favor, permite que otra persona aproveche este cupo. 🌱");
+                    btn.disabled = false;
+                    btn.textContent = '🌱 CONFIRMAR INSCRIPCIÓN';
+                }
+            }, 2800);
+
+        } catch (error) {
+            alert("Error de conexión. Intenta de nuevo.");
+            btn.disabled = false;
+            btn.textContent = '🌱 CONFIRMAR INSCRIPCIÓN';
+        }
+    }
+
+    // Iniciar carga de datos
+    actualizarCupos();
 </script>
+
 </body>
 </html>
