@@ -264,35 +264,37 @@
     if(inp) inp.classList.toggle('err', show);
   }
 
-  async function enviar() {
+ async function enviar() {
     const btn = document.getElementById('btn-enviar');
-    const fields = ['nombre', 'cedula', 'telefono', 'barrio', 'comunidad'];
-    fields.forEach(f => showErr(f, false));
-
+    
+    // Captura de datos
     const nombre = document.getElementById('nombre').value.trim();
     const cedula = document.getElementById('cedula').value.trim();
     const telefono = document.getElementById('telefono').value.trim();
     const barrio = document.getElementById('barrio').value.trim();
     const comunidadSel = document.getElementById('comunidad').value;
     const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
+    const como = document.getElementById('como').value;
 
+    // Validación simple
     if(!nombre || !cedula || !telefono || !barrio || !comunidadSel) {
-        if(!nombre) showErr('nombre', true);
-        if(!cedula) showErr('cedula', true);
-        if(!telefono) showErr('telefono', true);
-        if(!barrio) showErr('barrio', true);
-        if(!comunidadSel) showErr('comunidad', true);
+        alert("Por favor completa los campos obligatorios (*)");
         return;
     }
 
+    // Estado de carga
     btn.disabled = true;
     btn.textContent = '⏳ PROCESANDO...';
 
+    // Preparar lo que se envía a Google
     const payload = {
-        nombre, cedula, telefono, barrio,
+        nombre: nombre,
+        cedula: cedula,
+        telefono: telefono,
         email: document.getElementById('email').value.trim() || 'N/A',
+        barrio: barrio,
         comunidad: comunidadSel === 'otro' ? comunidadOtro : comunidadSel,
-        como_entero: document.getElementById('como').value,
+        como_entero: como,
         refrigerio: 'Sí',
         hora_inscripcion: new Date().toLocaleString()
     };
@@ -300,17 +302,20 @@
     try {
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
+            mode: 'cors', // Cambiado a cors para recibir respuesta
             body: JSON.stringify(payload)
         });
+        
         const res = await response.json();
 
         if (res.ok) {
             document.getElementById('form-section').style.display = 'none';
             document.getElementById('success-section').classList.add('show');
             document.getElementById('success-detail').innerHTML = `
-                <strong>Nombre:</strong> ${nombre}<br>
-                <strong>Cédula:</strong> ${cedula}<br>
-                <strong>Fecha:</strong> ${payload.hora_inscripcion}
+                <strong>¡Bienvenido/a!</strong><br>
+                ${nombre}<br>
+                Cédula: ${cedula}<br>
+                Fecha: ${payload.hora_inscripcion}
             `;
             actualizarCupos();
         } else {
@@ -319,9 +324,12 @@
             btn.textContent = '🌱 Confirmar mi inscripción';
         }
     } catch (e) {
-        alert('Error de conexión. Intenta de nuevo.');
+        console.error(e);
+        alert('Error de conexión. Verifica que el Script de Google esté publicado correctamente.');
         btn.disabled = false;
+        btn.textContent = '🌱 Confirmar mi inscripción';
     }
+}
   }
 
   actualizarCupos();
