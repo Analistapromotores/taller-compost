@@ -361,6 +361,135 @@ if (resultado.razon === 'duplicado') {
     // Iniciar carga de datos
     actualizarCupos();
 </script>
+    <script>
+    // 1. CONFIGURACIÓN: Pega aquí tu URL de la "Nueva Implementación"
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPdYvOoWMMX8Yk19aM6gSUiI4JmfLe9vCtCvngZSwHHaIk4Q12n-m0JRQsV7TZ5WPTQQ/exec';
+    let cuposGlobal = 10;
+
+    // Función para cargar cupos al inicio
+    async function actualizarCupos() {
+        try {
+            const res = await fetch(APPS_SCRIPT_URL);
+            const data = await res.json();
+            cuposGlobal = data.libres;
+            
+            document.getElementById('hero-cupos-num').textContent = cuposGlobal;
+            document.getElementById('form-cupos-num').textContent = `Cupos disponibles: ${cuposGlobal} / 10`;
+            
+            const pct = ((10 - cuposGlobal) / 10) * 100;
+            document.getElementById('hero-bar').style.width = pct + '%';
+
+            if(cuposGlobal <= 0) {
+                document.getElementById('form-section').style.display = 'none';
+                document.getElementById('lleno-section').classList.add('show');
+            }
+        } catch(e) {
+            console.error("Error al conectar:", e);
+        }
+    }
+
+    function toggleOtro() {
+        const sel = document.getElementById('comunidad').value;
+        document.getElementById('otro-wrap').classList.toggle('show', sel === 'otro');
+    }
+
+    function showErr(id, show) {
+        const input = document.getElementById(id);
+        const msg = document.getElementById('err-' + id);
+        if(input) input.classList.toggle('err', show);
+        if(msg) msg.classList.toggle('show', show);
+    }
+
+    function validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // FUNCIÓN DE ENVÍO CORREGIDA
+    async function enviar() {
+        const btn = document.getElementById('btn-enviar');
+        const fields = ['nombre', 'cedula', 'telefono', 'email', 'barrio', 'comunidad'];
+        
+        fields.forEach(f => showErr(f, false));
+
+        const nombre = document.getElementById('nombre').value.trim();
+        const cedula = document.getElementById('cedula').value.trim().replace(/\D/g,'');
+        const telefono = document.getElementById('telefono').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const barrio = document.getElementById('barrio').value.trim();
+        const comunidadSel = document.getElementById('comunidad').value;
+        const comunidadOtro = document.getElementById('comunidad-otro').value.trim();
+
+        // Validaciones de frontend
+        let esValido = true;
+        if(!nombre) { showErr('nombre', true); esValido = false; }
+        if(cedula.length < 6) { showErr('cedula', true); esValido = false; }
+        if(!telefono) { showErr('telefono', true); esValido = false; }
+        if(!validarEmail(email)) { showErr('email', true); esValido = false; }
+        if(!barrio) { showErr('barrio', true); esValido = false; }
+        if(!comunidadSel) { showErr('comunidad', true); esValido = false; }
+
+        if(!esValido) return;
+
+        // Estado de carga
+        btn.disabled = true;
+        btn.textContent = '⏳ PROCESANDO REGISTRO...';
+
+        const payload = {
+            nombre, cedula, telefono, email, barrio,
+            comunidad: comunidadSel === 'otro' ? comunidadOtro : comunidadSel,
+            como_entero: document.getElementById('como').value,
+            refrigerio: "Sí",
+            hora_inscripcion: new Date().toLocaleString(),
+            timestamp: Date.now()
+        };
+
+        try {
+            // ENVIAR DATOS
+            await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            });
+
+            // ESPERAR Y VERIFICAR (Damos 3.5 segundos para que Google procese)
+            setTimeout(async () => {
+                try {
+                    const checkRes = await fetch(APPS_SCRIPT_URL);
+                    const dataCheck = await checkRes.json();
+
+                    if (dataCheck.libres < cuposGlobal) {
+                        // EXITO: El cupo bajó en la base de datos
+                        document.getElementById('form-section').style.display = 'none';
+                        document.getElementById('success-section').classList.add('show');
+                        document.getElementById('success-detail').innerHTML = `
+                            <strong>Registrado:</strong> ${nombre}<br>
+                            <strong>Cédula:</strong> ${cedula}<br>
+                            <strong>Fecha:</strong> ${payload.hora_inscripcion}
+                        `;
+                        actualizarCupos();
+                    } else {
+                        // FALLO: El cupo es el mismo (Cédula repetida)
+                        alert("HOLA: Ya te inscribiste anteriormente con esta cédula. 🌱\nPermite que otra persona aproveche este cupo.");
+                        btn.disabled = false;
+                        btn.textContent = '🌱 CONFIRMAR INSCRIPCIÓN';
+                    }
+                } catch (err) {
+                    alert("Inscripción enviada. Si no ves el mensaje de éxito, refresca la página.");
+                    btn.disabled = false;
+                    btn.textContent = '🌱 CONFIRMAR INSCRIPCIÓN';
+                }
+            }, 3500);
+
+        } catch (error) {
+            alert("Error de conexión. Revisa tu internet.");
+            btn.disabled = false;
+            btn.textContent = '🌱 CONFIRMAR INSCRIPCIÓN';
+        }
+    }
+
+    // Cargar cupos al abrir la página
+    actualizarCupos();
+</script>
 
 </body>
 </html>
