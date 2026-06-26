@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de actividades</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; }
+body { font-family: Arial, Helvetica, sans-serif; background: #f5f5f5; }
+.app { padding: 12px; max-width: 480px; margin: 0 auto; width: 100%; }
+.header { background: #2d7a3a; color: white; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; }
+.header h1 { font-size: 16px; font-weight: 500; color: white; }
+.header p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+.step { display: none; }
+.step.active { display: block; }
+.card { background: #ffffff; border: 0.5px solid #e0e0e0; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.section-title { font-size: 13px; font-weight: 500; color: #666666; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.section-title i { font-size: 16px; }
+label { display: block; font-size: 13px; color: #666666; margin-bottom: 4px; margin-top: 12px; }
+label:first-of-type { margin-top: 0; }
+input[type=text], input[type=date], input[type=number], select {
+  width: 100%; padding: 9px 12px; font-size: 15px;
+  border: 0.5px solid #cccccc; border-radius: 10px;
+  background: #ffffff; color: #1a1a1a;
+}
+input[type=number] { -moz-appearance: textfield; }
+input:focus, select:focus { outline: none; border-color: #2d7a3a; box-shadow: 0 0 0 2px rgba(45,122,58,0.15); }
+.act-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+.act-btn { padding: 10px 8px; border: 0.5px solid #cccccc; border-radius: 10px; background: #ffffff; cursor: pointer; text-align: center; transition: all 0.15s; }
+.act-btn .code { font-size: 15px; font-weight: 500; color: #1a1a1a; }
+.act-btn .desc { font-size: 10px; color: #666666; margin-top: 2px; line-height: 1.3; }
+.act-btn.selected { border-color: #2d7a3a; background: #f0f8f1; }
+.act-btn.selected .code { color: #2d7a3a; }
+.act-input { display: none; margin-top: 8px; }
+.act-input.visible { display: flex; align-items: center; gap: 8px; background: #f0f0f0; border-radius: 10px; padding: 8px 10px; }
+.act-input label { margin: 0; white-space: nowrap; font-size: 13px; font-weight: 500; color: #2d7a3a; min-width: 30px; }
+.act-input input { flex: 1; }
+.ea-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid #e0e0e0; }
+.ea-item:last-child { border-bottom: none; }
+.ea-code { font-size: 13px; font-weight: 500; color: #1a1a1a; min-width: 36px; }
+.ea-desc { font-size: 12px; color: #666666; flex: 1; line-height: 1.3; }
+.ea-input { width: 70px; flex-shrink: 0; }
+.preg-section { margin-bottom: 20px; }
+.preg-header { font-size: 14px; font-weight: 500; color: #1a1a1a; padding: 8px 0; border-bottom: 0.5px solid #e0e0e0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.preg-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+.preg-field { background: #f0f0f0; border-radius: 10px; padding: 10px; }
+.preg-field label { font-size: 11px; color: #666666; margin-bottom: 4px; font-weight: 500; }
+.preg-field input { background: #ffffff; }
+.total-badge { font-size: 12px; background: #f0f8f1; color: #2d7a3a; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+.nav { display: flex; gap: 8px; margin-top: 16px; }
+.btn-back { flex: 1; padding: 12px; border: 0.5px solid #cccccc; border-radius: 10px; background: #ffffff; color: #666666; font-size: 15px; cursor: pointer; text-align: center; }
+.btn-next { flex: 2; padding: 12px; border: none; border-radius: 10px; background: #2d7a3a; color: white; font-size: 15px; font-weight: 500; cursor: pointer; }
+.btn-next:active { opacity: 0.85; }
+.steps-indicator { display: flex; gap: 4px; margin-bottom: 16px; }
+.step-dot { flex: 1; height: 3px; border-radius: 2px; background: #e0e0e0; transition: background 0.2s; }
+.step-dot.done { background: #2d7a3a; }
+.step-dot.active { background: #2d7a3a; opacity: 0.5; }
+.step-label { font-size: 13px; color: #666666; margin-bottom: 16px; }
+.success-screen { text-align: center; padding: 32px 16px; }
+.success-icon { font-size: 48px; color: #2d7a3a; margin-bottom: 12px; }
+.success-screen h2 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+.success-screen p { font-size: 14px; color: #666666; line-height: 1.5; }
+.data-review { background: #f0f0f0; border-radius: 10px; padding: 12px; margin-top: 12px; font-size: 13px; }
+.data-review div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 0.5px solid #e0e0e0; }
+.data-review div:last-child { border-bottom: none; }
+.data-review span:first-child { color: #666666; }
+.data-review span:last-child { font-weight: 500; color: #1a1a1a; }
+.alert { background: #fff8e1; border: 0.5px solid #f5c75a; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #7a5c00; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <h1>Registro de actividades</h1>
+    <p>Alcaldia de Santiago de Cali - Cuidadores</p>
+  </div>
+
+  <div class="steps-indicator">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+    <div class="step-dot" id="dot4"></div>
+  </div>
+
+  <div class="step active" id="step0">
+    <div class="step-label">Paso 1 de 5 - Informacion basica</div>
+    <div class="card">
+      <div class="section-title">Fecha y zona</div>
+      <label for="fecha">Fecha de la actividad</label>
+      <input type="date" id="fecha">
+      <label for="zona">Zona</label>
+      <select id="zona">
+        <option value="">Seleccionar zona...</option>
+        <option>PARQUE OBRERO</option>
+        <option>CARRERA 10</option>
+        <option>CALLE 5</option>
+        <option>BOULEVARD RIO</option>
+        <option>CAM</option>
+        <option>GRANADA</option>
+        <option>TERMINAL DE TRANSPORTE CALI</option>
+        <option>PLAN CENTRO</option>
+      </select>
+      <label for="jornada">Jornada</label>
+      <select id="jornada">
+        <option value="">Seleccionar...</option>
+        <option>MANANA</option>
+        <option>TARDE</option>
+      </select>
+    </div>
+    <div class="card">
+      <div class="section-title">Alcance</div>
+      <label for="promotores">Cantidad de promotores</label>
+      <input type="number" id="promotores" min="0" placeholder="0">
+      <label for="impactadas">Personas impactadas</label>
+      <input type="number" id="impactadas" min="0" placeholder="0">
+    </div>
+    <div class="nav">
+      <button class="btn-next" onclick="goTo(1)">Continuar &rarr;</button>
+    </div>
+  </div>
+
+  <div class="step" id="step1">
+    <div class="step-label">Paso 2 de 5 - Actividades contractuales</div>
+    <div class="card">
+      <div class="section-title">Actividades primarias</div>
+      <div class="act-grid" id="primarias-grid"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Actividades de prevencion</div>
+      <div class="act-grid" id="prevencion-grid"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Actividades de intervencion</div>
+      <div class="act-grid" id="intervencion-grid"></div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="goTo(0)">&larr; Atras</button>
+      <button class="btn-next" onclick="goTo(2)">Continuar &rarr;</button>
+    </div>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="step-label">Paso 3 de 5 - Escucha activa</div>
+    <div class="card">
+      <div class="section-title">Seguridad</div>
+      <div id="seguridad-list"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Salud publica</div>
+      <div id="salud-list"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Ambiente</div>
+      <div id="ambiente-list"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Tranquilidad</div>
+      <div id="tranquilidad-list"></div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" onclick="goTo(1)">&larr; Atras</button>
+      <button class="btn-next" onclick="goTo(3)">Continuar &rarr;</button>
+    </div>
+  </div>
+
+  <div class="step" id="step3">
+    <div class="step-label">Paso 4 de 5 - Metrica de encuestas</div>
+    <div class="card" id="preguntas-card"></div>
+    <div class="nav">
+      <button class="btn-back" onclick="goTo(2)">&larr; Atras</button>
+      <button class="btn-next" onclick="goTo(4)">Revisar &rarr;</button>
+    </div>
+  </div>
+
+  <div class="step" id="step4">
+    <div class="step-label">Paso 5 de 5 - Confirmacion</div>
+    <div class="card">
+      <div class="section-title">Resumen del registro</div>
+      <div class="data-review" id="resumen"></div>
+    </div>
+    <div class="alert">Revisa los datos antes de enviar. Una vez confirmado, copia el JSON y pegalo en Google Sheets.</div>
+    <div class="nav">
+      <button class="btn-back" onclick="goTo(3)">&larr; Atras</button>
+      <button class="btn-next" onclick="exportData()">&#8595; Exportar datos</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const actPrimarias = [
+  {code:'1.1',desc:'Acompanamiento tecnico y pedagogico para el fortalecimiento de la participacion ciudadana'},
+  {code:'1.2',desc:'Campana de difusion, sensibilizacion, recuperacion y embellecimiento de zonas priorizadas'},
+  {code:'1.3',desc:'Socializacion y educacion ciudadana con apoyo de medios digitales y material POP'},
+  {code:'1.4',desc:'Intervencion en las zonas priorizadas'},
+  {code:'1.5',desc:'Encuentros ciudadanos para fortalecer la interaccion social y la ruta multiplicadora'},
+  {code:'1.6',desc:'Creacion de la ruta multiplicadora de la estrategia'}
+];
+const actPrevencion = [
+  {code:'2.1',desc:'Pedagogia para el buen manejo y disposicion de residuos solidos'},
+  {code:'2.2',desc:'Campanas para el buen uso y cuidado del agua y la energia'},
+  {code:'2.3',desc:'Pedagogia para la correcta disposicion de aceites y grasas usadas'},
+  {code:'2.4',desc:'Sensibilizar y promover el buen uso del espacio publico'},
+  {code:'2.5',desc:'Sensibilizar en el uso del codigo de colores para reciclaje'},
+  {code:'2.6',desc:'Socializar disposicion de residuos de construccion y demolicion'},
+  {code:'2.7',desc:'Socializar horarios y frecuencias de recoleccion de aseo'},
+  {code:'2.8',desc:'Socializar sanciones del codigo de policia por residuos'},
+  {code:'2.9',desc:'Sensibilizar a la comunidad sobre los recicladores de oficio'}
+];
+const actIntervencion = [
+  {code:'3.1',desc:'Promocion del cuidado y buen uso del espacio publico y mejoramiento ambiental'},
+  {code:'3.2',desc:'Promover comportamientos adecuados con el medio ambiente y el espacio publico'},
+  {code:'3.3',desc:'Identificar factores que afectan el ornato y aseo del espacio publico'},
+  {code:'3.4',desc:'Estrategias de recuperacion, cuidado y buen uso del espacio publico'},
+  {code:'3.5',desc:'Articulacion con autoridades e instituciones educativas para el cuidado de recursos naturales'},
+  {code:'3.6',desc:'Campanas de embellecimiento del espacio publico en las comunas'},
+  {code:'3.7',desc:'Identificar factores contaminantes que afecten el espacio publico'}
+];
+const escuchaData = {
+  seguridad: [
+    {code:'SE1',desc:'Espacio publico descuidado de seguridad'},
+    {code:'SE2',desc:'Falta de presencia policial'},
+    {code:'SE3',desc:'Alumbrado publico'},
+    {code:'SE4',desc:'Consumo de estupefacientes'},
+    {code:'SE5',desc:'Contaminacion auditiva'},
+    {code:'SE6',desc:'Contaminacion visual'},
+    {code:'SE7',desc:'Recoleccion de basuras'},
+    {code:'SE8',desc:'Presencia de habitantes en condicion de calle'}
+  ],
+  salud: [
+    {code:'SA1',desc:'Manejo de excremento de mascotas'},
+    {code:'SA2',desc:'Punto de arrojo clandestino de basuras'},
+    {code:'SA3',desc:'Impacto sanitario por excretas humanas'}
+  ],
+  ambiente: [
+    {code:'A1',desc:'Impacto por residuos solidos en espacio publico'},
+    {code:'A2',desc:'Contaminacion visual y paisajistica'},
+    {code:'A3',desc:'Espacio publico descuidado por falta de aseo'}
+  ],
+  tranquilidad: [
+    {code:'T1',desc:'Consumo de sustancias prohibidas'},
+    {code:'T2',desc:'Arrojar basura sin permiso'},
+    {code:'T3',desc:'Grafitis sin permiso'},
+    {code:'T4',desc:'Realizacion de quemas no autorizadas'},
+    {code:'T5',desc:'Fumar en lugares prohibidos'},
+    {code:'T6',desc:'Deterioro del espacio publico'},
+    {code:'T7',desc:'Rinas por afectacion al ambiente'},
+    {code:'T8',desc:'Rinas por recoleccion de basuras'},
+    {code:'T9',desc:'Mora en la recoleccion de basuras'}
+  ]
+};
+const preguntaLabels = {
+  'P#1':'Pregunta 1','P#2':'Pregunta 2','P#3':'Pregunta 3','P#4':'Pregunta 4'
+};
+const actValues = {};
+
+function buildActGrid(items, containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach(a => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'grid-column: span 2;';
+    const btn = document.createElement('div');
+    btn.className = 'act-btn';
+    btn.innerHTML = `<div class="code">${a.code}</div><div class="desc">${a.desc}</div>`;
+    btn.style.cssText = 'display:flex;align-items:center;gap:10px;text-align:left;';
+    btn.querySelector('.code').style.cssText='font-size:15px;font-weight:500;min-width:36px;';
+    btn.onclick = () => toggleAct(a.code, btn, inp);
+    const inp = document.createElement('div');
+    inp.className = 'act-input';
+    inp.id = 'inp-' + a.code.replace('.','_');
+    inp.innerHTML = `<label>${a.code}</label><input type="number" min="0" placeholder="0" id="val-${a.code.replace('.','_')}" onchange="actValues['${a.code}']=+this.value">`;
+    wrap.appendChild(btn);
+    wrap.appendChild(inp);
+    el.appendChild(wrap);
+  });
+}
+
+function toggleAct(code, btn, inp) {
+  const sel = btn.classList.contains('selected');
+  btn.classList.toggle('selected', !sel);
+  inp.classList.toggle('visible', !sel);
+  if (sel) { delete actValues[code]; }
+}
+
+function buildEscuchaList(items, containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'ea-item';
+    row.innerHTML = `<span class="ea-code">${a.code}</span><span class="ea-desc">${a.desc}</span><input type="number" class="ea-input" min="0" placeholder="0" id="ea-${a.code}">`;
+    el.appendChild(row);
+  });
+}
+
+function buildPreguntas() {
+  const card = document.getElementById('preguntas-card');
+  card.innerHTML = '<div class="section-title">Metricas de encuestas</div>';
+  ['P#1','P#2','P#3','P#4'].forEach(p => {
+    const sec = document.createElement('div');
+    sec.className = 'preg-section';
+    const key = p.replace('#','');
+    sec.innerHTML = `
+      <div class="preg-header"><span>${preguntaLabels[p]}</span><span class="total-badge" id="tot-${key}">Total: 0</span></div>
+      <div class="preg-grid">
+        ${[1,2,3,4].map(n => `
+          <div class="preg-field">
+            <label>${p}=${n}</label>
+            <input type="number" min="0" placeholder="0" id="${key}_${n}" oninput="updateTotal('${key}')">
+          </div>`).join('')}
+      </div>`;
+    card.appendChild(sec);
+  });
+}
+
+function updateTotal(key) {
+  let t = 0;
+  [1,2,3,4].forEach(n => { t += +(document.getElementById(`${key}_${n}`)?.value||0); });
+  const el = document.getElementById('tot-' + key);
+  if(el) el.textContent = 'Total: ' + t;
+}
+
+function goTo(n) {
+  document.querySelectorAll('.step').forEach((s,i) => s.classList.toggle('active', i===n));
+  document.querySelectorAll('.step-dot').forEach((d,i) => {
+    d.classList.toggle('done', i<n);
+    d.classList.toggle('active', i===n);
+  });
+  if(n===4) buildResumen();
+  window.scrollTo(0,0);
+}
+
+function buildResumen() {
+  const r = document.getElementById('resumen');
+  const fecha = document.getElementById('fecha').value;
+  const zona = document.getElementById('zona').value;
+  const jornada = document.getElementById('jornada').value;
+  const prom = document.getElementById('promotores').value;
+  const imp = document.getElementById('impactadas').value;
+  const actSel = Object.keys(actValues).filter(k=>true);
+  let actStr = Object.entries(actValues).map(([k,v])=>`${k}: ${v}`).join(', ') || '-';
+  r.innerHTML = `
+    <div><span>Fecha</span><span>${fecha||'-'}</span></div>
+    <div><span>Zona</span><span>${zona||'-'}</span></div>
+    <div><span>Jornada</span><span>${jornada||'-'}</span></div>
+    <div><span>Promotores</span><span>${prom||0}</span></div>
+    <div><span>Personas impactadas</span><span>${imp||0}</span></div>
+    <div><span>Actividades</span><span>${actStr}</span></div>
+  `;
+}
+const WEBAPP_URL = "https://script.google.com/macros/s/https://script.google.com/macros/s/AKfycbzOJB9t09kVEFQ4TeWoM0CJyreQodhmhYDBSR7HwScpqpBhqO7ScrZ8lqpTgMaxmYtg/exec/exec";
+
+async function exportData() {
+  const payload = {
+    zona      : document.getElementById('zona').value,
+    jornada   : document.getElementById('jornada').value,
+    promotores: +document.getElementById('promotores').value || 0,
+    impactadas: +document.getElementById('impactadas').value || 0,
+    actividades: { ...actValues },
+    escucha   : {},
+    articulaciones: +document.getElementById('articulaciones')?.value || 0,
+    instituciones : document.getElementById('instituciones')?.value || '',
+    preguntas : {}
+  };
+
+  // Escucha activa
+  const todosEscucha = [
+    ...escuchaData.seguridad,
+    ...escuchaData.salud,
+    ...escuchaData.ambiente,
+    ...escuchaData.tranquilidad
+  ];
+  todosEscucha.forEach(item => {
+    const el = document.getElementById('ea-' + item.code);
+    if (el) payload.escucha[item.code] = +el.value || 0;
+  });
+
+  // Preguntas
+  ['P#1','P#2','P#3','P#4'].forEach(p => {
+    const id = 'preg-' + p.replace('#','');
+    const el = document.getElementById(id);
+    if (el) payload.preguntas[p] = +el.value || 0;
+  });
+
+  // Enviar
+  const btn = document.querySelector('#step4 .btn-next');
+  btn.textContent = 'Enviando…';
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch(WEBAPP_URL, {
+      method : 'POST',
+      body   : JSON.stringify(payload)
+    });
+    const json = await res.json();
+
+    if (json.ok) {
+      // Mostrar pantalla de éxito
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.querySelector('.app').insertAdjacentHTML('beforeend', `
+        <div class="success-screen">
+          <div class="success-icon">✅</div>
+          <h2>Registro enviado</h2>
+          <p>${json.msg}</p>
+        </div>
+      `);
+    } else {
+      alert('❌ Error: ' + json.error);
+      btn.textContent = 'Enviar';
+      btn.disabled = false;
+    }
+  } catch (err) {
+    alert('❌ Error de conexión: ' + err.message);
+    btn.textContent = 'Enviar';
+    btn.disabled = false;
+  }
+}
+
+buildActGrid(actPrimarias, 'primarias-grid');
+buildActGrid(actPrevencion, 'prevencion-grid');
+buildActGrid(actIntervencion, 'intervencion-grid');
+buildEscuchaList(escuchaData.seguridad, 'seguridad-list');
+buildEscuchaList(escuchaData.salud, 'salud-list');
+buildEscuchaList(escuchaData.ambiente, 'ambiente-list');
+buildEscuchaList(escuchaData.tranquilidad, 'tranquilidad-list');
+buildPreguntas();
+document.getElementById('fecha').valueAsDate = new Date();
+</script>
+
+</body>
+</html>
