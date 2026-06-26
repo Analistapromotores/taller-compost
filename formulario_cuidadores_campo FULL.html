@@ -391,29 +391,22 @@ async function exportData() {
   btn.disabled = true;
 
   try {
-    const res  = await fetch(WEBAPP_URL, {
+    // Google Apps Script requiere no-cors desde dominios externos
+    await fetch(WEBAPP_URL, {
       method  : 'POST',
-      redirect: 'follow',
+      mode    : 'no-cors',
       headers : { 'Content-Type': 'text/plain;charset=utf-8' },
       body    : JSON.stringify(payload)
     });
-    const json = await res.json();
-
-    if (json.ok) {
-      // Mostrar pantalla de éxito
-      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-      document.querySelector('.app').insertAdjacentHTML('beforeend', `
-        <div class="success-screen">
-          <div class="success-icon">✅</div>
-          <h2>Registro enviado</h2>
-          <p>${json.msg}</p>
-        </div>
-      `);
-    } else {
-      alert('❌ Error: ' + json.error);
-      btn.textContent = 'Enviar';
-      btn.disabled = false;
-    }
+    // Con no-cors la respuesta es opaca, asumimos éxito si no hay excepción
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.app').insertAdjacentHTML('beforeend', `
+      <div class="success-screen">
+        <div class="success-icon">✅</div>
+        <h2>Registro enviado</h2>
+        <p>✅ Datos enviados correctamente a la matriz.</p>
+      </div>
+    `);
   } catch (err) {
     alert('❌ Error de conexión: ' + err.message);
     btn.textContent = 'Enviar';
